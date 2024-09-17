@@ -75,6 +75,43 @@ class Publicacao {
 
 }
 
+class PublicacaoAvancada extends Publicacao{
+    private _Interacoes : Interacao[]; 
+    
+    constructor(id: number, usuario: Usuario, conteudo: string) {
+        super(id, usuario, conteudo); //contrutor da superclasse
+        this._Interacoes = [] 
+    }
+
+    inserir_reacao(nova_Interacao : Interacao){
+
+        for(let interacao of this._Interacoes){
+            if(nova_Interacao.usuario.id == interacao.usuario.id){ //verifica se o usuario ja interagiu com essa publicacao
+                throw new InteracaoRepetidaError("Você já interagiu com essa publicação antes.")
+            }
+        }
+
+        this._Interacoes.push(nova_Interacao); //adiciona a reacao na colecao de reacoes da publicacao
+    }
+
+    get Interacoes(): Interacao []{
+        return this._Interacoes;
+    }
+
+    get toString() {
+        return `\n
+    _________________________________________________
+    => Usuario: ${this.usuario.apelido}
+    => Post id: ${this.id} 
+    _________________________________________________
+    > : ${this.conteudo}
+    _________________________________________________
+    ${this.dataHora}
+    - Reações : ${this.Interacoes.length}                                 `
+    }
+    
+}
+
 //Tipos enumerados 
 
 enum TipoInteracao{
@@ -117,43 +154,6 @@ class Interacao {
     get dataHora(): Date{
         return this._dataHora;
     }
-}
-
-class PublicacaoAvancada extends Publicacao{
-    private _Interacoes : Interacao[]; 
-    
-    constructor(id: number, usuario: Usuario, conteudo: string) {
-        super(id, usuario, conteudo); //contrutor da superclasse
-        this._Interacoes = [] 
-    }
-
-    inserir_reacao(nova_Interacao : Interacao){
-
-        for(let interacao of this._Interacoes){
-            if(nova_Interacao.usuario.id == interacao.usuario.id){ //verifica se o usuario ja interagiu com essa publicacao
-                throw new InteracaoRepetidaError("Você já interagiu com essa publicação antes.")
-            }
-        }
-
-        this._Interacoes.push(nova_Interacao); //adiciona a reacao na colecao de reacoes da publicacao
-    }
-
-    get Interacoes(): Interacao []{
-        return this._Interacoes;
-    }
-
-    get toString() {
-        return `\n
-    _________________________________________________
-    => Usuario: ${this.usuario.apelido}
-    => Post id: ${this.id} 
-    _________________________________________________
-    > : ${this.conteudo}
-    _________________________________________________
-    ${this.dataHora}
-    - Reações : ${this.Interacoes.length}                                 `
-    }
-    
 }
 
 class RedeSocial {
@@ -243,44 +243,5 @@ class RedeSocial {
 
 }
 
-
-
-
-
-
-
-
-
-
-/*
-
-let user = new Usuario(1, "ayrlonsilva9@gmail.com", "ayrlon.png", "070896963-16");
-let P1 = new Publicacao(1, 1, "Eu sou o milhor");
-
-let input: prompt.Prompt  = prompt()
-let continuar = input("Digite algo : ");
-
-
-
-let user2 = new Usuario(2, "slime009@gmail.com", "deku.png", "070233963-20");
-let P2 = new Publicacao(2, 2, "I am the best");
-
-console.log(P1.id);
-console.log(P1.usuario);
-console.log(P1.conteudo);
-console.log(P1.get_date());
-
-
-console.log(P2.id);
-console.log(P2.usuario);
-console.log(P2.conteudo);
-console.log(P2.get_date());
-
-if(P2.dataHora > P1.dataHora){
-    console.log(`Maior data : ${P2.get_date()}`)
-}
-else{
-    console.log(`Maior data : ${P1.get_date()}`);
-}*/
 
 export {Usuario, Publicacao, PublicacaoAvancada, Interacao, TipoInteracao, RedeSocial}

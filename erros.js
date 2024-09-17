@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InteracaoRepetidaError = exports.NaoehPublicacaoAvancadaError = exports.NenhumUsuarioCadastradoError = exports.PublicacaoNaoEncontradaError = exports.UsuarioNaoEncontradoError = exports.CadastroDuplicadoError = exports.AplicacaoError = void 0;
+exports.NenhumaPublicacaoExistenteError = exports.InteracaoRepetidaError = exports.NaoehPublicacaoAvancadaError = exports.NenhumUsuarioCadastradoError = exports.PublicacaoNaoEncontradaError = exports.UsuarioNaoEncontradoError = exports.CadastroDuplicadoError = exports.AplicacaoError = void 0;
 class AplicacaoError extends Error {
     constructor(mensagem) {
         super(mensagem);
@@ -31,6 +31,12 @@ class NenhumUsuarioCadastradoError extends AplicacaoError {
     }
 }
 exports.NenhumUsuarioCadastradoError = NenhumUsuarioCadastradoError;
+class NenhumaPublicacaoExistenteError extends AplicacaoError {
+    constructor(mensagem) {
+        super(mensagem);
+    }
+}
+exports.NenhumaPublicacaoExistenteError = NenhumaPublicacaoExistenteError;
 class NaoehPublicacaoAvancadaError extends AplicacaoError {
     constructor(mensagem) {
         super(mensagem);

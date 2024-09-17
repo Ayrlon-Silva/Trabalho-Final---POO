@@ -1,6 +1,6 @@
 import prompt from 'prompt-sync';
 import {Usuario, Publicacao, PublicacaoAvancada, Interacao, TipoInteracao, RedeSocial} from "./classes"
-import { AplicacaoError, NaoehPublicacaoAvancadaError, NenhumUsuarioCadastradoError } from "./erros"
+import { AplicacaoError, NaoehPublicacaoAvancadaError, NenhumaPublicacaoExistenteError, NenhumUsuarioCadastradoError } from "./erros"
 
 
 class AppRedeSocial {
@@ -161,6 +161,10 @@ class AppRedeSocial {
     }
 
     private mostrar_publicacoes(){
+        if(this._RedeSocial.Publicacoes.length < 1){
+            throw new NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.")
+        }
+
         let Publis : Publicacao [] = this.ordenar(this._RedeSocial.Publicacoes) //ordena as publicacoes da mais recente até a mais antiga
         
         console.log(`\n[              feed de publicações              ]\n\n`)
@@ -172,17 +176,25 @@ class AppRedeSocial {
     }
 
     private mostrar_publicacoes_por_usuario(){
+        if(this._RedeSocial.Publicacoes.length < 1){
+            throw new NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.")
+        }
         console.log("\n")
         console.log(`[             Publicações por usuario             ]`)
         console.log(`__________________________________________________\n\n`)
         let email_do_usuario: string = this._input("> Digite o email do usuario: ") //pede o email do usuario para ver suas publicações
+        let user : Usuario = this._RedeSocial.Consultar_Usuario(email_do_usuario) //verfica se o usuario existe 
+
+        if(!this.ha_publicacoes_do_usuario(email_do_usuario)){ 
+            throw new NenhumaPublicacaoExistenteError("Este usuario ainda não possui publicacoes")
+        }
 
         let Publis : Publicacao [] = this.ordenar(this._RedeSocial.Publicacoes) //ordena as publicacoes
 
-        console.log(`[             Publicações de ${this._RedeSocial.Consultar_Usuario(email_do_usuario).apelido}             ]`)
         for(let p of Publis){
-            if(p.usuario.email == email_do_usuario){ // mostra as publicacoes cujo o id do usuario é igual ao fornecido.
-            console.log(p.toString)
+            if(p.usuario.email == email_do_usuario){ // procura se há alguma publicacao do usuario e se houver retorna true
+                console.log(p.toString)
+                break;
             }
         }
 
@@ -190,6 +202,10 @@ class AppRedeSocial {
     }
 
     private reagir_a_publicacao(){
+        if(this._RedeSocial.Publicacoes.length < 1){
+            throw new NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.")
+        }
+
         console.log("\n")
         console.log(`[               Reagir a publicacao                ]`)
         console.log(`___________________________________________________\n`)
@@ -226,6 +242,19 @@ class AppRedeSocial {
         }
     }
 
+    private ha_publicacoes_do_usuario(email_do_usuario : string): boolean{
+        let Publis : Publicacao [] = this.ordenar(this._RedeSocial.Publicacoes) //ordena as publicacoes
+
+        let tem : boolean = false
+        for(let p of Publis){
+            if(p.usuario.email == email_do_usuario){ // procura se há alguma publicacao do usuario e se houver retorna true
+                tem = true
+                break
+            }
+        }
+
+        return tem;
+    }
     private clear_screen(){
         console.clear()
     }

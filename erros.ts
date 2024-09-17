@@ -29,6 +29,12 @@ class NenhumUsuarioCadastradoError extends AplicacaoError {
     }
 }
 
+class NenhumaPublicacaoExistenteError extends AplicacaoError {
+    constructor(mensagem: string){
+        super(mensagem)
+    }
+}
+
 class NaoehPublicacaoAvancadaError extends AplicacaoError {
     constructor(mensagem: string){
         super(mensagem)
@@ -42,4 +48,4 @@ class InteracaoRepetidaError extends AplicacaoError {
 }
 
 
-export{AplicacaoError, CadastroDuplicadoError, UsuarioNaoEncontradoError, PublicacaoNaoEncontradaError, NenhumUsuarioCadastradoError, NaoehPublicacaoAvancadaError, InteracaoRepetidaError}
+export{AplicacaoError, CadastroDuplicadoError, UsuarioNaoEncontradoError, PublicacaoNaoEncontradaError, NenhumUsuarioCadastradoError, NaoehPublicacaoAvancadaError, InteracaoRepetidaError, NenhumaPublicacaoExistenteError}

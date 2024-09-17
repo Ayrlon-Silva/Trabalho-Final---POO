@@ -59,6 +59,35 @@ class Publicacao {
     }
 }
 exports.Publicacao = Publicacao;
+class PublicacaoAvancada extends Publicacao {
+    constructor(id, usuario, conteudo) {
+        super(id, usuario, conteudo); //contrutor da superclasse
+        this._Interacoes = [];
+    }
+    inserir_reacao(nova_Interacao) {
+        for (let interacao of this._Interacoes) {
+            if (nova_Interacao.usuario.id == interacao.usuario.id) { //verifica se o usuario ja interagiu com essa publicacao
+                throw new erros_1.InteracaoRepetidaError("Você já interagiu com essa publicação antes.");
+            }
+        }
+        this._Interacoes.push(nova_Interacao); //adiciona a reacao na colecao de reacoes da publicacao
+    }
+    get Interacoes() {
+        return this._Interacoes;
+    }
+    get toString() {
+        return `\n
+    _________________________________________________
+    => Usuario: ${this.usuario.apelido}
+    => Post id: ${this.id} 
+    _________________________________________________
+    > : ${this.conteudo}
+    _________________________________________________
+    ${this.dataHora}
+    - Reações : ${this.Interacoes.length}                                 `;
+    }
+}
+exports.PublicacaoAvancada = PublicacaoAvancada;
 //Tipos enumerados 
 var TipoInteracao;
 (function (TipoInteracao) {
@@ -94,35 +123,6 @@ class Interacao {
     }
 }
 exports.Interacao = Interacao;
-class PublicacaoAvancada extends Publicacao {
-    constructor(id, usuario, conteudo) {
-        super(id, usuario, conteudo); //contrutor da superclasse
-        this._Interacoes = [];
-    }
-    inserir_reacao(nova_Interacao) {
-        for (let interacao of this._Interacoes) {
-            if (nova_Interacao.usuario.id == interacao.usuario.id) { //verifica se o usuario ja interagiu com essa publicacao
-                throw new erros_1.InteracaoRepetidaError("Você já interagiu com essa publicação antes.");
-            }
-        }
-        this._Interacoes.push(nova_Interacao); //adiciona a reacao na colecao de reacoes da publicacao
-    }
-    get Interacoes() {
-        return this._Interacoes;
-    }
-    get toString() {
-        return `\n
-    _________________________________________________
-    => Usuario: ${this.usuario.apelido}
-    => Post id: ${this.id} 
-    _________________________________________________
-    > : ${this.conteudo}
-    _________________________________________________
-    ${this.dataHora}
-    - Reações : ${this.Interacoes.length}                                 `;
-    }
-}
-exports.PublicacaoAvancada = PublicacaoAvancada;
 class RedeSocial {
     constructor() {
         this._Usuarios = [];

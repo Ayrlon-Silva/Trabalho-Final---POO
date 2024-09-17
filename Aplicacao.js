@@ -134,6 +134,9 @@ class AppRedeSocial {
         this._RedeSocial.Inserir_Publicacao(nova_publicacao); // insere a publicacao na colecao ou retorna erro se o id for repetido
     }
     mostrar_publicacoes() {
+        if (this._RedeSocial.Publicacoes.length < 1) {
+            throw new erros_1.NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.");
+        }
         let Publis = this.ordenar(this._RedeSocial.Publicacoes); //ordena as publicacoes da mais recente até a mais antiga
         console.log(`\n[              feed de publicações              ]\n\n`);
         for (let p of Publis) {
@@ -142,20 +145,30 @@ class AppRedeSocial {
         console.log("\n");
     }
     mostrar_publicacoes_por_usuario() {
+        if (this._RedeSocial.Publicacoes.length < 1) {
+            throw new erros_1.NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.");
+        }
         console.log("\n");
         console.log(`[             Publicações por usuario             ]`);
         console.log(`__________________________________________________\n\n`);
         let email_do_usuario = this._input("> Digite o email do usuario: "); //pede o email do usuario para ver suas publicações
+        let user = this._RedeSocial.Consultar_Usuario(email_do_usuario); //verfica se o usuario existe 
+        if (!this.ha_publicacoes_do_usuario(email_do_usuario)) {
+            throw new erros_1.NenhumaPublicacaoExistenteError("Este usuario ainda não possui publicacoes");
+        }
         let Publis = this.ordenar(this._RedeSocial.Publicacoes); //ordena as publicacoes
-        console.log(`[             Publicações de ${this._RedeSocial.Consultar_Usuario(email_do_usuario).apelido}             ]`);
         for (let p of Publis) {
-            if (p.usuario.email == email_do_usuario) { // mostra as publicacoes cujo o id do usuario é igual ao fornecido.
+            if (p.usuario.email == email_do_usuario) { // procura se há alguma publicacao do usuario e se houver retorna true
                 console.log(p.toString);
+                break;
             }
         }
         console.log("\n");
     }
     reagir_a_publicacao() {
+        if (this._RedeSocial.Publicacoes.length < 1) {
+            throw new erros_1.NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.");
+        }
         console.log("\n");
         console.log(`[               Reagir a publicacao                ]`);
         console.log(`___________________________________________________\n`);
@@ -185,6 +198,17 @@ class AppRedeSocial {
         else if (reacao == classes_1.TipoInteracao.triste) {
             publicacao_desejada.inserir_reacao(new classes_1.Interacao(publicacao_desejada.Interacoes.length + 1, publicacao_desejada, classes_1.TipoInteracao.triste, user));
         }
+    }
+    ha_publicacoes_do_usuario(email_do_usuario) {
+        let Publis = this.ordenar(this._RedeSocial.Publicacoes); //ordena as publicacoes
+        let tem = false;
+        for (let p of Publis) {
+            if (p.usuario.email == email_do_usuario) { // procura se há alguma publicacao do usuario e se houver retorna true
+                tem = true;
+                break;
+            }
+        }
+        return tem;
     }
     clear_screen() {
         console.clear();
