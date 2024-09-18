@@ -194,7 +194,6 @@ class AppRedeSocial {
         for(let p of Publis){
             if(p.usuario.email == email_do_usuario){ // procura se há alguma publicacao do usuario e se houver retorna true
                 console.log(p.toString)
-                break;
             }
         }
 
