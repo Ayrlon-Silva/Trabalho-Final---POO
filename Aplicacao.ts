@@ -29,37 +29,61 @@ class AppRedeSocial {
             switch (opcao) {
                 case "1":
                     this.clear_screen()
-                    this._cadastrarUsuario()  //pede os dados e cadastra um novo usuario na colecao de usuarios 
+                    this._cadastrarUsuario()  
                     this.enter_to_continue()
                     break;
     
                 case "2":
                     this.clear_screen()
-                    this._listarUsuarios()  //lista os usuarios cadastrados na colecao de usuarios 
+                    this._listarUsuarios()  
                     this.enter_to_continue()
                     break;
 
                 case "3": 
                     this.clear_screen()
-                    this.nova_publicacao() //adiciona uma nova publicacao na colecao de publicacoes
+                    this.excluir_Usuario() 
                     this.enter_to_continue()
                     break;
 
                 case "4":
                     this.clear_screen()
-                    this.mostrar_publicacoes() //Mostra a colecao de publicacoes em ordem decrescente de data
+                    this.nova_publicacao() 
                     this.enter_to_continue()
                     break;
 
                 case "5":
                     this.clear_screen()
-                    this.mostrar_publicacoes_por_usuario() //mostra as publicacoes de um usuario especifico cujo email é fornecido
+                    this.mostrar_publicacoes() 
                     this.enter_to_continue()
                     break;
 
                 case "6":
                     this.clear_screen()
-                    this.reagir_a_publicacao() //reage a uma publicacao avancada e adciona a interacao na colecao de interacoes da publicacao.
+                    this.mostrar_publicacoes_por_usuario() 
+                    this.enter_to_continue()
+                    break;
+
+                case "7":
+                    this.clear_screen();
+                    this.reagir_a_publicacao() 
+                    this.enter_to_continue()
+                    break;
+
+                case "8":
+                    this.clear_screen()
+                    this.editar_publicacao()
+                    this.enter_to_continue()
+                    break;
+                
+                case "9":
+                    this.clear_screen()
+                    this.excluir_postagem()
+                    this.enter_to_continue()
+
+                    break;
+                case "10":
+                    this.clear_screen()
+                    this.detalhar_publicacão()
                     this.enter_to_continue()
                     break;
                 }
@@ -81,13 +105,18 @@ class AppRedeSocial {
         console.log("|                                         |");
         console.log("| 1. Cadastrar Usuário                    |");
         console.log("| 2. Listar Usuários                      |");
-        console.log("| 3. Criar Publicação                     |");
-        console.log("| 4. Listar Publicações                   |");
-        console.log("| 5. Listar Publicações por Usuário       |");
-        console.log("| 6. Reagir a Publicação Avançada         |");
+        console.log("| 3. Excluir Usuário                      |");
+        console.log("| 4. Criar Publicação                     |");
+        console.log("| 5. Listar Publicações                   |");
+        console.log("| 6. Listar Publicações por Usuário       |");
+        console.log("| 7. Reagir a Publicação Avançada         |");
+        console.log("| 8. Editar uma Publicação                |");
+        console.log("| 9. Excluir uma Publicação               |");
+        console.log("| 10. Detalhar Publicação Avançada        |");
         console.log("|                                         |");
         console.log("| 0. Sair                                 |");
         console.log("|-----------------------------------------|");
+        console.log("\n")
     }
 
     private _cadastrarUsuario(){
@@ -109,7 +138,6 @@ class AppRedeSocial {
     }
 
     private _listarUsuarios() {
-
         if(this._RedeSocial.Usuarios.length < 1){
             throw new NenhumUsuarioCadastradoError("Nenhum usuario foi Cadastrado ainda.")
         }
@@ -125,6 +153,18 @@ class AppRedeSocial {
         }
     }
 
+    private excluir_Usuario(){
+        if(this._RedeSocial.Usuarios.length < 1){
+            throw new NenhumUsuarioCadastradoError("Nenhum usuario foi Cadastrado ainda.")
+        }
+
+        console.log("\n")
+        console.log(`[                 Excluir Usuario                 ]`)
+        console.log(`__________________________________________________\n`)
+        let id_do_usuario: number = Number(this._input("> Digite o id do Usuario : "))
+
+        this._RedeSocial.Excluir_Usuario(id_do_usuario)
+    }
 
     
     private nova_publicacao(){
@@ -224,8 +264,8 @@ class AppRedeSocial {
 
 
         //insere a reacao na publicacao
-        if(reacao == TipoInteracao.curtir){
-            publicacao_desejada.inserir_reacao(new Interacao(publicacao_desejada.Interacoes.length + 1, publicacao_desejada, TipoInteracao.curtir, user))
+        if(reacao == TipoInteracao.curtida){
+            publicacao_desejada.inserir_reacao(new Interacao(publicacao_desejada.Interacoes.length + 1, publicacao_desejada, TipoInteracao.curtida, user))
         }
         else if(reacao == TipoInteracao.naocurtir){
             publicacao_desejada.inserir_reacao(new Interacao(publicacao_desejada.Interacoes.length + 1, publicacao_desejada, TipoInteracao.naocurtir, user))
@@ -241,6 +281,74 @@ class AppRedeSocial {
         }
     }
 
+    private editar_publicacao(){
+        if(this._RedeSocial.Publicacoes.length < 1){
+            throw new NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.")
+        }
+
+        console.log("\n")
+        console.log(`[                 Editar publicacao                 ]`)
+        console.log(`___________________________________________________\n`)
+        let id_da_publicacao: number = Number(this._input("> Digite o id da publicacao : "))
+        let publicacao_desejada = this._RedeSocial.Consultar_Publicacao(id_da_publicacao) //busca a publicacao com o id fornecido ou retorna erro caso não encontre
+        console.log("\n")
+
+        console.log(`\n>>         Publicação Encontrada         <<`)
+        console.log(`--------------------------------------------`)
+        console.log(publicacao_desejada.toString)
+
+        console.log("\n")
+        console.log(`                    Novo Conteudo:                    `)
+        console.log(`____________________________________________________\n`)
+        let novo_conteudo: string = this._input("> Digite aqui: ")
+
+        for(let i : number = 0; i < this._RedeSocial.Publicacoes.length; i++){
+            if(this._RedeSocial.Publicacoes[i].id == publicacao_desejada.id){
+                this._RedeSocial.Publicacoes[i].conteudo = novo_conteudo
+                break;
+            }
+        }
+
+        console.log(`\n\n>>>> Publicação Editada !\n\n`)    
+    }
+
+    private excluir_postagem(){
+        if(this._RedeSocial.Publicacoes.length < 1){
+            throw new NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.")
+        }
+
+        console.log("\n")
+        console.log(`[                 Excluir publicacao                 ]`)
+        console.log(`____________________________________________________\n`)
+        let id_da_publicacao: number = Number(this._input("> Digite o id da publicacao : "))
+        let publicacao_desejada = this._RedeSocial.Consultar_Publicacao(id_da_publicacao) //busca a publicacao com o id fornecido ou retorna erro caso não encontre
+        console.log("\n")
+        
+
+        this._RedeSocial.Excluir_publicacao(id_da_publicacao)
+    }
+
+    private detalhar_publicacão(){
+        if(this._RedeSocial.Publicacoes.length < 1){
+            throw new NenhumaPublicacaoExistenteError("Nenhuma publicação foi adcionada ainda.")
+        }
+
+        console.log("\n")
+        console.log(`[            Detalhar publicacao Avançada            ]`)
+        console.log(`_____________________________________________________\n`)
+        let id_da_publicacao: number = Number(this._input("> Digite o id da publicacao : "))
+        let publicacao_desejada = this._RedeSocial.Consultar_Publicacao(id_da_publicacao) //busca a publicacao com o id fornecido ou retorna erro caso não encontre
+        console.log("\n")
+
+        if(!(publicacao_desejada instanceof PublicacaoAvancada)){
+            throw new NaoehPublicacaoAvancadaError("Não é possivel detalhar uma publicação simples")
+        }
+        
+        console.log(`\n[            Interações da Publicação            ]\n`)
+        console.log(publicacao_desejada.toStringInteracoes)
+        
+    }
+
     private ha_publicacoes_do_usuario(email_do_usuario : string): boolean{
         let Publis : Publicacao [] = this.ordenar(this._RedeSocial.Publicacoes) //ordena as publicacoes
 
@@ -254,6 +362,7 @@ class AppRedeSocial {
 
         return tem;
     }
+
     private clear_screen(){
         console.clear()
     }

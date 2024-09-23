@@ -41,6 +41,9 @@ class Publicacao {
     get conteudo() {
         return this._conteudo;
     }
+    set conteudo(valor) {
+        this._conteudo = valor;
+    }
     get dataHora() {
         let hora = this._dataHora.getHours();
         let min = this._dataHora.getMinutes();
@@ -86,12 +89,19 @@ class PublicacaoAvancada extends Publicacao {
     ${this.dataHora}
     - Reações : ${this.Interacoes.length}                                 `;
     }
+    get toStringInteracoes() {
+        let interacoes = " ";
+        for (let i = 0; i < this.Interacoes.length; i++) {
+            interacoes += this.Interacoes[i].toString;
+        }
+        return interacoes;
+    }
 }
 exports.PublicacaoAvancada = PublicacaoAvancada;
 //Tipos enumerados 
 var TipoInteracao;
 (function (TipoInteracao) {
-    TipoInteracao[TipoInteracao["curtir"] = 1] = "curtir";
+    TipoInteracao[TipoInteracao["curtida"] = 1] = "curtida";
     TipoInteracao[TipoInteracao["naocurtir"] = 2] = "naocurtir";
     TipoInteracao[TipoInteracao["riso"] = 3] = "riso";
     TipoInteracao[TipoInteracao["surpresa"] = 4] = "surpresa";
@@ -119,7 +129,18 @@ class Interacao {
         return this._usuario;
     }
     get dataHora() {
-        return this._dataHora;
+        let hora = this._dataHora.getHours();
+        let min = this._dataHora.getMinutes();
+        let seg = this._dataHora.getSeconds();
+        return `${hora}:${min}:${seg}`;
+    }
+    get toString() {
+        return `\n
+    _________________________________________________
+    Data : ${this.dataHora}
+    Usuario : ${this.usuario.apelido}
+    Tipo : ${this.tipo == 1 ? "curtida" : this.tipo == 2 ? "deslike" : this.tipo == 3 ? "riso" : this.tipo == 4 ? "surpresa" : "triste"}
+    _________________________________________________`;
     }
 }
 exports.Interacao = Interacao;
@@ -172,6 +193,24 @@ class RedeSocial {
         }
         return Usuario_procurado;
     }
+    Consultar_Indice_Usuario(id) {
+        let p = this.Consultar_Usuario_por_id(id); //procura se o usuario existe
+        let indice = -1;
+        for (let i = 0; i < this._Usuarios.length; i++) {
+            if (this._Usuarios[i].id == id) { //procura o indice do Usuario com o id igual ao fornecido
+                indice = i;
+                break;
+            }
+        }
+        return indice;
+    }
+    Excluir_Usuario(id) {
+        let indice = this.Consultar_Indice_Usuario(id);
+        for (let i = indice; i < this._Usuarios.length; i++) {
+            this._Usuarios[i] = this._Usuarios[i + 1];
+        }
+        this._Usuarios.pop();
+    }
     //metodos de inclusao e consulta de publicacoes
     Inserir_Publicacao(newPublicacao) {
         for (let Publi of this._Publicações) {
@@ -193,6 +232,24 @@ class RedeSocial {
             throw new erros_1.PublicacaoNaoEncontradaError("Nenhuma publicacao encontrada com esse id: " + id);
         }
         return Publicacao_procurada;
+    }
+    Consultar_Indice_Publicacao(id) {
+        let p = this.Consultar_Publicacao(id); //procura se a publicacao existe
+        let indice = -1;
+        for (let i = 0; i < this._Publicações.length; i++) {
+            if (this._Publicações[i].id == id) { //procura o indice da publicação com o id igual ao fornecido
+                indice = i;
+                break;
+            }
+        }
+        return indice;
+    }
+    Excluir_publicacao(id) {
+        let indice = this.Consultar_Indice_Publicacao(id);
+        for (let i = indice; i < this._Publicações.length; i++) {
+            this._Publicações[i] = this._Publicações[i + 1];
+        }
+        this._Publicações.pop();
     }
 }
 exports.RedeSocial = RedeSocial;

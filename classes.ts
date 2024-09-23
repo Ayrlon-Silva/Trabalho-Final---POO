@@ -54,6 +54,11 @@ class Publicacao {
     get conteudo(): string{
         return this._conteudo;
     }
+
+    set conteudo(valor : string) {
+        this._conteudo = valor;
+    }
+
     get dataHora(): string{
         let hora = this._dataHora.getHours()
         let min = this._dataHora.getMinutes()
@@ -109,28 +114,37 @@ class PublicacaoAvancada extends Publicacao{
     ${this.dataHora}
     - Reações : ${this.Interacoes.length}                                 `
     }
+
+    get toStringInteracoes(): string{
+        let interacoes : string = " "
+        for(let i : number = 0; i < this.Interacoes.length; i ++){
+            interacoes += this.Interacoes[i].toString
+        }
+        
+        return interacoes
+    }
     
 }
 
 //Tipos enumerados 
 
 enum TipoInteracao{
-    curtir = 1,
-    naocurtir = 2,
-    riso = 3,
-    surpresa = 4,
-    triste = 5
+    "curtida" = 1,
+    "naocurtir" = 2,
+    "riso" = 3,
+    "surpresa" = 4,
+    "triste" = 5
 }
 
 class Interacao {
     //Atributos e construtores
     private _id : number;
     private _publicacao : Publicacao;
-    private _tipoInteracao : number;
+    private _tipoInteracao : TipoInteracao;
     private _usuario : Usuario;
     private _dataHora : Date;
 
-    constructor(id: number, P : Publicacao, T: number, U: Usuario) {
+    constructor(id: number, P : Publicacao, T: TipoInteracao, U: Usuario) {
         this._id = id;
         this._publicacao = P;
         this._tipoInteracao = T;
@@ -151,8 +165,22 @@ class Interacao {
     get usuario(): Usuario{
         return this._usuario;
     }
-    get dataHora(): Date{
-        return this._dataHora;
+
+    get dataHora(): string{
+        let hora = this._dataHora.getHours()
+        let min = this._dataHora.getMinutes()
+        let seg = this._dataHora.getSeconds()
+
+        return `${hora}:${min}:${seg}`
+    }
+
+    get toString(): string {
+        return `\n
+    _________________________________________________
+    Data : ${this.dataHora}
+    Usuario : ${this.usuario.apelido}
+    Tipo : ${this.tipo == 1? "curtida": this.tipo == 2 ? "deslike": this.tipo == 3? "riso": this.tipo == 4? "surpresa": "triste"}
+    _________________________________________________`
     }
 }
 
@@ -214,6 +242,30 @@ class RedeSocial {
         return Usuario_procurado
     }
 
+    Consultar_Indice_Usuario(id: number): number {
+        let p = this.Consultar_Usuario_por_id(id); //procura se o usuario existe
+        let indice : number = -1;
+
+        for(let i : number = 0; i < this._Usuarios.length; i++){
+            if(this._Usuarios[i].id == id){ //procura o indice do Usuario com o id igual ao fornecido
+                indice = i; 
+                break;
+            }
+        }
+
+        return indice;
+    }
+
+    Excluir_Usuario(id: number){
+        let indice = this.Consultar_Indice_Usuario(id)
+
+        for(let i : number = indice; i < this._Usuarios.length; i++){
+            this._Usuarios[i] = this._Usuarios[i + 1]
+        }
+
+        this._Usuarios.pop();
+    }
+
     //metodos de inclusao e consulta de publicacoes
     Inserir_Publicacao(newPublicacao: Publicacao){
         for(let Publi of this._Publicações){
@@ -239,6 +291,31 @@ class RedeSocial {
         }
 
         return Publicacao_procurada;
+    }
+
+    Consultar_Indice_Publicacao(id: number): number {
+
+        let p = this.Consultar_Publicacao(id); //procura se a publicacao existe
+        let indice : number = -1;
+
+        for(let i : number = 0; i < this._Publicações.length; i++){
+            if(this._Publicações[i].id == id){ //procura o indice da publicação com o id igual ao fornecido
+                indice = i; 
+                break;
+            }
+        }
+
+        return indice;
+    }
+
+    Excluir_publicacao(id: number){
+        let indice = this.Consultar_Indice_Publicacao(id)
+
+        for(let i : number = indice; i < this._Publicações.length; i++){
+            this._Publicações[i] = this._Publicações[i + 1]
+        }
+
+        this._Publicações.pop();
     }
 
 }
